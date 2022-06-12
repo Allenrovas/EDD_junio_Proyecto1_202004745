@@ -30,6 +30,18 @@
     color: white;
   }
 
+  #graficas{
+    width: 1200px;
+    height: 900px;
+    background: #4e4d4d;
+    margin: auto;
+    margin-top: 50px;
+    box-shadow: 7px 13px 37px #000;
+    padding: 20px 30px;
+    border-top: 4px solid #cca000;
+    color: white;
+  }
+
   .form-usuario {
     width: 1200px;
     height: 900px;
