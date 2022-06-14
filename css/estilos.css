@@ -20,7 +20,7 @@
 
   .form-administracion {
     width: 1200px;
-    height: 900px;
+    height: 1200px;
     background: #4e4d4d;
     margin: auto;
     margin-top: 50px;
@@ -31,8 +31,8 @@
   }
 
   #graficas{
-    width: 1200px;
-    height: 900px;
+    width: 900px;
+    height: 750px;
     background: #4e4d4d;
     margin: auto;
     margin-top: 50px;

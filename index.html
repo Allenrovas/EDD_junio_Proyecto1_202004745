@@ -36,10 +36,10 @@
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link" href="#services">Misión</a></li>
                         <li class="nav-item"><a class="nav-link" href="#portfolio">Visión</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#top5">Top 5</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">Acerca de </a></li>
                         <li class="nav-item"><a class="nav-link" href="#team">Desarrolado por</a></li>
                         <li class="nav-item"><a class="nav-link" href="#info">Información</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#contact">Contáctenos</a></li>
                     </ul>
                 </div>
             </div>
@@ -73,6 +73,17 @@
                     <h3 class="section-subheading text-muted">Ser la librería líder en el Sur occidente de Guatemala en la venta 
                         y distribución de libros de textos, libros de lectura en general, plataformas digitales, tanto de editoriales nacionales 
                         como extranjeras, reconocida por la calidad de nuestro servicio y la contribución a la comunidad educativa.</h3>
+                </div>
+            </div>
+        </section>
+
+        <!-- Top 5-->
+        <section class="page-section" id="top5">
+            <div class="container">
+                <div class="text-center">
+                    <h2 class="section-heading text-uppercase">Top 5</h2>
+                    <h3 class="section-subheading text-muted">Los 5 usuarios con más libros.</h3>
+                    <div id="graficas"></div>
                 </div>
             </div>
         </section>
@@ -176,6 +187,8 @@
             </div>
         </section>
 
+        
+
         <section class="contactenos"  id="info">
             <div class="container">
                 <div class="text-center">
@@ -198,7 +211,7 @@
         </section>
         
         <!-- Contact2-->
-        <section class="page-section" id="contact">
+        <section class="page-section" id="contact" style="display: none;">
             <div class="container">
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase">Contáctenos</h2>
@@ -307,10 +320,23 @@
 
     <div id="Administracion" style="display: none;">
         <section class="form-administracion">
-            <h5>Administración</h5>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="CargaMasivaUsuarios">Cargar Usuarios</button>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="CargaMasivaLibros">Cargar Libros</button>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="CargaMasivaAutores">Cargar Autores</button>
+            <h1>Administración</h1>
+            <br></br>
+            <h5>Carga Masiva Usuarios</h5>
+            <br></br>
+            <input class="form-control" type="file" id="masivaUsuarios" accept=".json">
+            <br></br>
+            <br></br>
+            <h5>Carga Masiva Libros</h5>
+            <br></br>
+            <input class="form-control" type="file" id="masivaLibros" accept=".json">
+            <br></br>
+            <br></br>
+            <h5>Carga Masiva Autores</h5>
+            <br></br>
+            <input class="form-control" type="file" id="masivaAutores" accept=".json">
+            <br></br>
+            <br></br>
             <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_regresarAdministracion">Regresar</button>
         </section>
     </div>
@@ -320,14 +346,14 @@
     <div id="PaginaUsuario" style="display: none;">
         <section class="form-usuario">
             <h5>Usuario</h5>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="CargaMasivaUsuarios">Cargar Usuarios</button>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="CargaMasivaLibros">Cargar Libros</button>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="CargaMasivaAutores">Cargar Autores</button>
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="a">Cargar Usuarios</button>
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="b">Cargar Libros</button>
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="c">Cargar Autores</button>
             <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_regresarUsuario">Regresar</button>
         </section>
     </div>
 
-    <div id="graficas"></div>
+    
 
 
 
@@ -338,6 +364,7 @@
     <script src="//d3js.org/d3.v5.min.js"></script>
     <script src="https://unpkg.com/@hpcc-js/wasm@0.3.11/dist/index.min.js"></script>
     <script src="https://unpkg.com/d3-graphviz@3.0.5/build/d3-graphviz.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </body>
 
 </html>

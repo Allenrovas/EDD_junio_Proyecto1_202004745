@@ -1,3 +1,129 @@
+//Libros
+class Libro{
+    constructor(isbn, nombre_autor, nombre_libro, cantidad, fila, columna, paginas, categoria){
+        this.isbn = isbn;
+        this.nombre_autor = nombre_autor;
+        this.nombre_libro = nombre_libro;
+        this.cantidad = cantidad;
+        this.fila = fila;
+        this.columna = columna;
+        this.paginas = paginas;
+        this.categoria = categoria;
+        this.siguiente = null;
+        this.anterior = null;
+    }
+}
+
+class ListaLibros{
+    constructor(){
+        this.cabeza = null;
+        this.cola = null;
+        this.contador = 0;
+    }
+
+    InsertarLibro(isbn, nombre_autor, nombre_libro, cantidad, fila, columna, paginas, categoria){
+        var nuevo = new Libro(isbn, nombre_autor, nombre_libro, cantidad, fila, columna, paginas, categoria);
+        if(this.cabeza == null){
+            this.cabeza = nuevo;
+            this.cola = nuevo;
+        }else{
+            nuevo.anterior = this.cola;
+            this.cola.siguiente = nuevo;
+            this.cola = nuevo;
+        }
+        this.contador++;
+        
+    }
+}
+
+class Top5Usuario{
+    constructor(nombre, cantidad, usuario){
+        this.nombre = nombre;
+        this.cantidad = cantidad;
+        this.usuario = usuario;
+        this.siguiente = null;
+        this.anterior = null;
+    }
+}
+
+class ListaTop5{
+    constructor(){
+        this.cabeza = null;
+        this.cola = null;
+        this.contador = 0;
+    }
+    InsertarUsuario(nombre, cantidad, usuario){
+        var nuevo = new Top5Usuario(nombre, cantidad,usuario);
+        if(this.cabeza == null){
+            this.cabeza = nuevo;
+            this.cola = nuevo;
+        }else{
+            nuevo.anterior = this.cola;
+            this.cola.siguiente = nuevo;
+            this.cola = nuevo;
+        }
+        this.contador++;
+        this.ordenarTop5();
+    }
+    
+    Buscar (usuario){
+        var actual = this.cabeza;
+        while(actual != null){
+            if(actual.usuario == usuario){
+                return actual;
+            }
+            actual = actual.siguiente;
+        }
+        return null;
+    }
+
+    CambiarTop5(nombre, cantidad, usuario){
+        var actual = this.cabeza;
+        while(actual != null){
+            if(actual.usuario == usuario){
+                actual.cantidad = cantidad;
+                break;
+            }
+            actual = actual.siguiente;
+        }
+    }
+
+    ordenarTop5(){
+        if(this.contador>1){
+            while(true){
+                var actual = this.cabeza;
+                var i = null;
+                var j = this.cabeza.siguiente;
+                var cambio = false;
+                while(j != null){
+                    if(actual.cantidad > j.cantidad){
+                        cambio = true;
+                        if (i != null){
+                            var tmp = j.siguiente;
+                            i.siguiente = j;
+                            j.siguiente = actual;
+                            actual.siguiente = tmp;
+                        }else{
+                            var tmp2 = j.siguiente;
+                            this.cabeza = j;
+                            j.siguiente = actual;
+                            actual.siguiente = tmp2;
+                        }
+                        i = j;
+                        j = actual.siguiente;
+                    }else{
+                        i = actual;
+                        actual = j;
+                        j = j.siguiente;
+                    }
+                }if (!cambio){
+                    break;
+                }
+            }
+        }
+    }
+}
+
 //Usuarios
 class Usuario{
     constructor(dpi,nombre_completo,nombre_usuario,correo,rol,contrasenia,telefono){
@@ -66,9 +192,21 @@ class ListaUsuarios{
                 actual = actual.siguiente;
             }
         }
+        return null;
+    }
+
+    imprimirUsuarios(){
+        let actual = this.cabeza;
+        if(actual != null){
+            for (var i = 0; i < this.tamanio; i++) {
+                console.log(actual);
+                actual = actual.siguiente;
+            }
+        }
     }
 }
 
+//Matriz Dispersa
 class Nodo_Cabecera{
     constructor(id){
         this.id = id;
@@ -138,7 +276,6 @@ class Lista_Cabecera{
     mostrarCabeceras(){
         let tmp = this.primero;
         while(tmp != null){
-            console.log(tmp.getId());
             tmp = tmp.siguiente;
         }
     }
@@ -288,7 +425,6 @@ class Matriz_Dispersa{
             while (tempo != null){
                 posicion = tempo.coordenadaX+","+tempo.coordenadaY+","+tempo.libro+";"
                 tempo = tempo.getDerecha()
-                console.log(posicion)
             }
             Contador += 1
         }
@@ -297,6 +433,7 @@ class Matriz_Dispersa{
 
     graficarNeato(){
         var contenido = "digraph G{";
+        contenido += "layout = neato;"
         contenido += 'node[shape=box, width=0.7, height=0.7, fontname="Arial", fillcolor="white", style=filled]'+
         'edge[style = "bold"]'+
         'graph[rankdir = "TB"]'+
@@ -384,35 +521,128 @@ class Matriz_Dispersa{
         contenido += '\n}';
          //--- se genera DOT y se procede a ecjetuar el comando
         
-        console.log(contenido);
+        d3.select("#graficas").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(contenido)
 
     }
 }
 
+//Arbol de busqueda
+class Autor{
+    constructor(dpi, nombre_autor, correo, telefono, direccion, biografia){
+        this.dpi = dpi;
+        this.nombre_autor = nombre_autor;
+        this.correo = correo;
+        this.telefono = telefono;
+        this.direccion = direccion;
+        this.biografia = biografia;
+        this.izquierda = null;
+        this.derecha = null;
+    }
+
+    insertar(dpi, nombre_autor, correo, telefono, direccion, biografia){
+        var Prueba = 0;
+        console.log(dpi);
+        if(nombre_autor.localeCompare(this.nombre_autor)<0){
+            if(this.izquierda == null){
+                this.izquierda = new Autor(dpi, nombre_autor, correo, telefono, direccion, biografia);
+            }else{
+                this.izquierda.insertar(dpi, nombre_autor, correo, telefono, direccion, biografia);
+            }
+        }else if(nombre_autor.localeCompare(this.nombre_autor)>0){
+            if(this.derecha == null){
+                this.derecha = new Autor(dpi, nombre_autor, correo, telefono, direccion, biografia);
+            }else{
+                this.derecha.insertar(dpi, nombre_autor, correo, telefono, direccion, biografia);
+            }
+        }else{
+            console.log("El autor ya existe");
+        }
+    }
+
+    obtenerGraphivz(){
+        return "digraph grafica{\n" +
+               "rankdir=TB;\n" +
+               "node [shape = record, style=filled, fillcolor=seashell2];\n"+
+                this.getCodigoInterno()+
+                "}\n";
+    }
+       
+    getCodigoInterno(){
+        var etiqueta = "";
+        if(this.izquierda==null && this.derecha==null){
+            etiqueta="nodo"+this.dpi+" [ label =\""+this.nombre_autor+"\"];\n";
+        }else{
+            etiqueta="nodo"+this.dpi+" [ label =\"<C0>|"+this.nombre_autor+"|<C1>\"];\n";
+        }
+        if(this.izquierda!=null){
+            etiqueta=etiqueta + this.izquierda.getCodigoInterno() +
+               "nodo"+this.dpi+":C0->nodo"+this.izquierda.dpi+"\n";
+        }
+        if(this.derecha!=null){
+            etiqueta=etiqueta + this.derecha.getCodigoInterno() +
+               "nodo"+this.dpi+":C1->nodo"+this.derecha.dpi+"\n";                    
+        }
+        return etiqueta;
+    }
+    
+}
+
+class Arbol{
+    constructor(){
+        this.raiz = null;
+    }
+
+    insertar(dpi, nombre_autor, correo, telefono, direccion, biografia){
+        if(this.raiz == null){
+            this.raiz = new Autor(dpi, nombre_autor, correo, telefono, direccion, biografia);
+        }else{
+            this.raiz.insertar(dpi, nombre_autor, correo, telefono, direccion, biografia);
+        }
+    }
+
+    graficarArbol(){
+        var actual;
+        actual = this.raiz;
+        var hola = actual.obtenerGraphivz();
+        console.log(hola);
+        d3.select("#graficas").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(hola)
+    } 
+}
+
 
 var matrizThriller = new Matriz_Dispersa();
-matrizThriller.insertar(1,1,"Libro del Dragón");
-matrizThriller.insertar(1,2,"b");
-matrizThriller.insertar(1,3,"c");
-matrizThriller.insertar(1,4,"d");
-matrizThriller.insertar(2,1,"e");
-matrizThriller.insertar(2,2,"f");
-matrizThriller.insertar(2,4,"g");
-matrizThriller.insertar(3,2,"h");
-matrizThriller.insertar(3,3,"i");
-matrizThriller.imprimir();
-matrizThriller.graficarNeato();
-
-
-
+var matrizFantasia = new Matriz_Dispersa();
 var listaUsuarios = new ListaUsuarios();
-listaUsuarios.InsertarUsuario("2354168452525","Wilfred Perez","Wilfred","wilfred@gmail.com","Administrador","123","+502 (123) 123-4567");
-listaUsuarios.InsertarUsuario("2354168452525","Allen Román","Allenrovas","algirova@gmail.com","Usuario","123","+502 (123) 123-4567");
+listaUsuarios.InsertarUsuario(2354168452525,"Wilfred Perez","Wilfred","wilfred@gmail.com","Administrador","123","+502 (123) 123-4567");
+var listaAutores = new Arbol();
+var listaLibros = new ListaLibros();
 
 //Pagina de Login
 document.getElementById("IniciarSesion").onclick=function(){
     document.getElementById("Login").style.display="block";
     document.getElementById("Index").style.display="none";
+    
+}
+
+function llenarOrtogonal(){
+    var i =1;
+    var j =1;
+    while (i <= 25){
+        while (j <= 25){
+            matrizFantasia.insertar(i,j,"");
+            j+=1;
+            
+        }
+        j=1;
+        i+=1;
+        
+    }
     
 }
 
@@ -422,21 +652,100 @@ document.getElementById("btn_login").onclick=function(){
     let usuario = document.getElementById("usuarioLogin").value;
     let contrasenia = document.getElementById("usuarioContra").value;
     var usuarioEntrada = listaUsuarios.RecorrerMenu(usuario,contrasenia);
-    if(usuarioEntrada.rol == "Administrador"){
-        document.getElementById("Login").style.display="none";
-        document.getElementById("Index").style.display="none";
-        document.getElementById("Administracion").style.display="block";
-    }
-    else if(usuarioEntrada.rol == "Usuario"){
-        document.getElementById("Login").style.display="none";
-        document.getElementById("Index").style.display="none";
-        document.getElementById("Administracion").style.display="none";
-        document.getElementById("PaginaUsuario").style.display="block";
+    if (usuarioEntrada != null){
+        if(usuarioEntrada.rol == "Administrador"){
+            document.getElementById("Login").style.display="none";
+            document.getElementById("Index").style.display="none";
+            document.getElementById("Administracion").style.display="block";
+        }
+        else if(usuarioEntrada.rol == "Usuario"){
+            document.getElementById("Login").style.display="none";
+            document.getElementById("Index").style.display="none";
+            document.getElementById("Administracion").style.display="none";
+            document.getElementById("PaginaUsuario").style.display="block";
+        }
+    }else{
+        alert("Usuario o contraseña incorrectos");
     }
     document.getElementById("usuarioLogin").value = "";
     document.getElementById("usuarioContra").value = "";
 
 
+}
+
+function leerArchivoUsuario(e) {
+    var archivo = e.target.files[0];
+    if (!archivo) {
+      return;
+    }
+    var lector = new FileReader();
+    lector.onload = function(e) {
+        var contenido = e.target.result;
+        CargarUsuarios(contenido);
+    };
+    lector.readAsText(archivo);
+  }
+
+function leerArchivoAutor(e) {
+    var archivo = e.target.files[0];
+    if (!archivo) {
+      return;
+    }
+    var lector = new FileReader();
+    lector.onload = function(e) {
+        var contenido = e.target.result;
+        CargarAutores(contenido);
+    };
+    lector.readAsText(archivo);
+}
+
+function leerArchivoLibro(e) {
+    var archivo = e.target.files[0];
+    if (!archivo) {
+        return;
+    }
+    var lector = new FileReader();
+    lector.onload = function(e) {
+        var contenido = e.target.result;
+        CargarLibros(contenido);
+    }
+    lector.readAsText(archivo);
+}
+
+
+document.getElementById('masivaUsuarios').addEventListener('change', leerArchivoUsuario, false);
+document.getElementById('masivaLibros').addEventListener('change', leerArchivoLibro, false);
+document.getElementById('masivaAutores').addEventListener('change', leerArchivoAutor, false);
+
+function CargarUsuarios(contenido){
+    var datos = JSON.parse(contenido);
+    console.log(datos);
+    for (var i = 0; i < datos.length; i++) {
+        listaUsuarios.InsertarUsuario(datos[i].dpi,datos[i].nombre_completo,datos[i].nombre_usuario,datos[i].correo,datos[i].rol,datos[i].contrasenia,datos[i].telefono);
+    }
+    alert("Usuarios cargados");
+}
+
+function CargarLibros(contenido){
+    var datos = JSON.parse(contenido);
+    console.log(datos);
+    for (var i = 0; i < datos.length; i++) {
+        listaLibros.InsertarLibro(datos[i].isbn,datos[i].nombre_autor,datos[i].nombre_libro,datos[i].cantidad,datos[i].fila,datos[i].columna,datos[i].paginas,datos[i].categoria);
+        if(datos[i].categoria == "Fantasia"){
+            matrizFantasia.insertar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
+        }else if(datos[i].categoria == "Thriller"){
+            matrizThriller.insertar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
+        }
+
+    }
+}
+
+function CargarAutores(contenido){
+    var datos = JSON.parse(contenido);
+    console.log(datos);
+    for (var i = 0; i < datos.length; i++) {
+        listaAutores.insertar(datos[i].dpi,datos[i].nombre_autor,datos[i].correo,datos[i].telefono,datos[i].telefono,datos[i].direccion,datos[i].biografia);
+    }
 }
 
 document.getElementById("btn_regresar").onclick=function(){
@@ -447,10 +756,12 @@ document.getElementById("btn_regresar").onclick=function(){
 }
 
 document.getElementById("btn_regresarAdministracion").onclick=function(){
+    listaAutores.graficarArbol();
     document.getElementById("Login").style.display="none";
     document.getElementById("Index").style.display="block";
     document.getElementById("Administracion").style.display="none";
     document.getElementById("PaginaUsuario").style.display="none";
+    
 }
 
 document.getElementById("btn_regresarUsuario").onclick=function(){
@@ -460,6 +771,6 @@ document.getElementById("btn_regresarUsuario").onclick=function(){
     document.getElementById("PaginaUsuario").style.display="none";
 }
 
-
-
+llenarOrtogonal();
+console.log("matrizFantasia");
 
