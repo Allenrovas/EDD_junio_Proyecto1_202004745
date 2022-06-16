@@ -431,20 +431,32 @@ class Matriz_Dispersa{
             
     }
 
+    modificar(columna,fila,libro){
+        var Nodo = this.filas.getCabecera(columna).getAcceso();
+        while (Nodo != null){
+            if (Nodo.coordenadaX == columna && Nodo.coordenadaY == fila){
+                Nodo.libro = libro;
+                break;
+            }
+            Nodo = Nodo.getDerecha();
+        }
+
+    }
+
     graficarNeato(){
         var contenido = "digraph G{";
-        contenido += "layout = neato;"
+        contenido += 'layout = neato;\n bgcolor="none";\n';
         contenido += 'node[shape=box, width=0.7, height=0.7, fontname="Arial", fillcolor="white", style=filled]'+
         'edge[style = "bold"]'+
         'graph[rankdir = "TB"]'+
-        "node[label = \"capa:" + this.capa +'" fillcolor="darkolivegreen1" pos = "-1,1!"]raiz;';
-        contenido += 'label = "\nMATRIZ DISPERSA" \nfontname="Arial Black" \nfontsize="25pt" \n\n';
+        "node[label = \"Raíz" + " " +'" fillcolor="darkolivegreen1" pos = "-1,1!"]raiz;';
+        contenido += 'label = "\nMATRIZ" \nfontname="Arial Black" \nfontsize="25pt" \n\n';
        
 
         var pivote = this.filas.primero;
         var posx = 0;
         while(pivote != null){
-            contenido += '\n\tnode[label = "F'+pivote.id+'" fillcolor="azure3" pos="-1,-'+posx+'!" shape=box fontsize=5]x'+pivote.id+';';
+            contenido += '\n\tnode[label = "F'+pivote.id+'" fillcolor="azure3" pos="-1,-'+posx+'!" shape=box fontsize=8]x'+pivote.id+';';
             pivote = pivote.siguiente;
             posx += 1;
         }
@@ -521,10 +533,11 @@ class Matriz_Dispersa{
         contenido += '\n}';
          //--- se genera DOT y se procede a ecjetuar el comando
         
-        d3.select("#graficas").graphviz()
+        return contenido;
+        /*d3.select("#graficas").graphviz()
             .width(1200)
             .height(900)
-            .renderDot(contenido)
+            .renderDot(contenido)*/
 
     }
 }
@@ -543,8 +556,6 @@ class Autor{
     }
 
     insertar(dpi, nombre_autor, correo, telefono, direccion, biografia){
-        var Prueba = 0;
-        console.log(dpi);
         if(nombre_autor.localeCompare(this.nombre_autor)<0){
             if(this.izquierda == null){
                 this.izquierda = new Autor(dpi, nombre_autor, correo, telefono, direccion, biografia);
@@ -564,8 +575,8 @@ class Autor{
 
     obtenerGraphivz(){
         return "digraph grafica{\n" +
-               "rankdir=TB;\n" +
-               "node [shape = record, style=filled, fillcolor=seashell2];\n"+
+               'rankdir=TB;\n label="Arbol Binario Autores";\nfontsize="50";\n bgcolor="none";\n' +
+               'node [ style=filled , fillcolor=darkgoldenrod2];\n'+
                 this.getCodigoInterno()+
                 "}\n";
     }
@@ -575,15 +586,15 @@ class Autor{
         if(this.izquierda==null && this.derecha==null){
             etiqueta="nodo"+this.dpi+" [ label =\""+this.nombre_autor+"\"];\n";
         }else{
-            etiqueta="nodo"+this.dpi+" [ label =\"<C0>|"+this.nombre_autor+"|<C1>\"];\n";
+            etiqueta="nodo"+this.dpi+" [ label =\""+this.nombre_autor+"\"];\n";
         }
         if(this.izquierda!=null){
             etiqueta=etiqueta + this.izquierda.getCodigoInterno() +
-               "nodo"+this.dpi+":C0->nodo"+this.izquierda.dpi+"\n";
+               "nodo"+this.dpi+"->nodo"+this.izquierda.dpi+"\n";
         }
         if(this.derecha!=null){
             etiqueta=etiqueta + this.derecha.getCodigoInterno() +
-               "nodo"+this.dpi+":C1->nodo"+this.derecha.dpi+"\n";                    
+               "nodo"+this.dpi+"->nodo"+this.derecha.dpi+"\n";                    
         }
         return etiqueta;
     }
@@ -607,12 +618,58 @@ class Arbol{
         var actual;
         actual = this.raiz;
         var hola = actual.obtenerGraphivz();
-        console.log(hola);
-        d3.select("#graficas").graphviz()
+        d3.select("#Arbol_Binario").graphviz()
             .width(1200)
             .height(900)
             .renderDot(hola)
     } 
+
+    inorden(){
+        var res =document.querySelector("#tablaAutores");
+        res.innerHTML = "";
+        this.inordenAux(this.raiz,res);
+    }
+    inordenAux(nodo,res){
+        var respuesta = res;
+        if(nodo != null){
+            this.inordenAux(nodo.izquierda,respuesta);
+            respuesta.innerHTML +=
+            "<tr>"+
+                "<td>"+nodo.dpi+"</td>"+
+                "<td>"+nodo.nombre_autor+"</td>"+
+                "<td>"+nodo.correo+"</td>"+
+                "<td>"+nodo.telefono+"</td>"+
+                "<td>"+nodo.direccion+"</td>"+
+                "<td>"+nodo.biografia+"</td>"+
+            "</tr>";
+            this.inordenAux(nodo.derecha,respuesta);
+        }
+    }
+
+    buscar(nombre){
+        this.buscarAux(this.raiz,nombre);
+    }
+    buscarAux(nodo,nombre){
+        if(nodo != null){
+            this.buscarAux(nodo.izquierda,nombre);
+            if(nodo.nombre_autor.localeCompare(nombre)==0){
+                var res =document.querySelector("#tablaAutores");
+                res.innerHTML = "";
+                res.innerHTML +=
+                "<tr>"+
+                    "<td>"+nodo.dpi+"</td>"+
+                    "<td>"+nodo.nombre_autor+"</td>"+
+                    "<td>"+nodo.correo+"</td>"+
+                    "<td>"+nodo.telefono+"</td>"+
+                    "<td>"+nodo.direccion+"</td>"+
+                    "<td>"+nodo.biografia+"</td>"+
+                "</tr>";
+                return;
+            }
+            this.buscarAux(nodo.derecha,nombre);
+        }
+    }
+
 }
 
 
@@ -620,6 +677,8 @@ var matrizThriller = new Matriz_Dispersa();
 var matrizFantasia = new Matriz_Dispersa();
 var listaUsuarios = new ListaUsuarios();
 listaUsuarios.InsertarUsuario(2354168452525,"Wilfred Perez","Wilfred","wilfred@gmail.com","Administrador","123","+502 (123) 123-4567");
+listaUsuarios.InsertarUsuario(2354168452525,"Wilfred Perez","allenrovas","wilfred@gmail.com","Usuario","123","+502 (123) 123-4567");
+
 var listaAutores = new Arbol();
 var listaLibros = new ListaLibros();
 
@@ -667,10 +726,7 @@ document.getElementById("btn_login").onclick=function(){
     }else{
         alert("Usuario o contraseña incorrectos");
     }
-    document.getElementById("usuarioLogin").value = "";
-    document.getElementById("usuarioContra").value = "";
-
-
+    
 }
 
 function leerArchivoUsuario(e) {
@@ -717,9 +773,10 @@ document.getElementById('masivaUsuarios').addEventListener('change', leerArchivo
 document.getElementById('masivaLibros').addEventListener('change', leerArchivoLibro, false);
 document.getElementById('masivaAutores').addEventListener('change', leerArchivoAutor, false);
 
+
+
 function CargarUsuarios(contenido){
     var datos = JSON.parse(contenido);
-    console.log(datos);
     for (var i = 0; i < datos.length; i++) {
         listaUsuarios.InsertarUsuario(datos[i].dpi,datos[i].nombre_completo,datos[i].nombre_usuario,datos[i].correo,datos[i].rol,datos[i].contrasenia,datos[i].telefono);
     }
@@ -732,19 +789,52 @@ function CargarLibros(contenido){
     for (var i = 0; i < datos.length; i++) {
         listaLibros.InsertarLibro(datos[i].isbn,datos[i].nombre_autor,datos[i].nombre_libro,datos[i].cantidad,datos[i].fila,datos[i].columna,datos[i].paginas,datos[i].categoria);
         if(datos[i].categoria == "Fantasia"){
-            matrizFantasia.insertar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
+            matrizFantasia.modificar(datos[i].columna,datos[i].fila,datos[i].nombre_libro);
         }else if(datos[i].categoria == "Thriller"){
-            matrizThriller.insertar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
+            matrizThriller.insertar(datos[i].columna,datos[i].fila,datos[i].nombre_libro);
         }
 
+    }
+    alert("Libros cargados");
+    try{
+        var contenido_fantasia= matrizFantasia.graficarNeato();
+        d3.select("#Clasificacion_Fantasia").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(contenido_fantasia)
+        d3.select("#Logico_Fantasia").graphviz()
+        .width(1200)
+        .height(900)
+        .renderDot(contenido_fantasia)
+    }catch(error){
+        console.error(error);
+    }
+    try{
+        var contenido_thriller= matrizThriller.graficarNeato();
+        d3.select("#Clasificacion_Thriller").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(contenido_thriller)
+        d3.select("#Logico_Thriller").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(contenido_thriller)
+    }catch(error){
+        console.error(error);
     }
 }
 
 function CargarAutores(contenido){
     var datos = JSON.parse(contenido);
-    console.log(datos);
     for (var i = 0; i < datos.length; i++) {
-        listaAutores.insertar(datos[i].dpi,datos[i].nombre_autor,datos[i].correo,datos[i].telefono,datos[i].telefono,datos[i].direccion,datos[i].biografia);
+        listaAutores.insertar(datos[i].dpi,datos[i].nombre_autor,datos[i].correo,datos[i].telefono,datos[i].direccion,datos[i].biografia);
+    }
+    alert("Autores cargados");
+    try{
+        listaAutores.graficarArbol();
+        listaAutores.inorden();
+    }catch(error){
+        console.error(error);
     }
 }
 
@@ -753,15 +843,54 @@ document.getElementById("btn_regresar").onclick=function(){
     document.getElementById("Index").style.display="block";
     document.getElementById("Administracion").style.display="none";
     document.getElementById("PaginaUsuario").style.display="none";
+    document.getElementById("usuarioLogin").value = "";
+    document.getElementById("usuarioContra").value = "";
 }
 
+document.getElementById("btn_autor").onclick=function(){
+    document.getElementById("btn_autor").style.display="none";
+    document.getElementById("form-libros").style.display="none";
+    document.getElementById("form-librera").style.display="none";
+    document.getElementById("form-autor").style.display="block";
+    document.getElementById("btn_libros").style.display="flex";
+    document.getElementById("btn_librera").style.display="flex";
+}
+
+document.getElementById("btn_libros").onclick=function(){
+    document.getElementById("btn_libros").style.display="none";
+    document.getElementById("form-libros").style.display="block";
+    document.getElementById("form-librera").style.display="none";
+    document.getElementById("form-autor").style.display="none";
+    document.getElementById("btn_autor").style.display="flex";
+    document.getElementById("btn_librera").style.display="flex";
+}
+
+document.getElementById("btn_librera").onclick=function(){
+    document.getElementById("btn_librera").style.display="none";
+    document.getElementById("form-libros").style.display="none";
+    document.getElementById("form-librera").style.display="block";
+    document.getElementById("form-autor").style.display="none";
+    document.getElementById("btn_autor").style.display="flex";
+    document.getElementById("btn_libros").style.display="flex";
+}
+
+
 document.getElementById("btn_regresarAdministracion").onclick=function(){
-    listaAutores.graficarArbol();
     document.getElementById("Login").style.display="none";
     document.getElementById("Index").style.display="block";
     document.getElementById("Administracion").style.display="none";
     document.getElementById("PaginaUsuario").style.display="none";
+    document.getElementById("usuarioLogin").value = "";
+    document.getElementById("usuarioContra").value = "";
     
+}
+
+document.getElementById("btn_ResetearAutor").onclick=function(){
+    listaAutores.inorden();
+}
+
+document.getElementById("btn_BuscarAutor").onclick=function(){
+    listaAutores.buscar(document.getElementById("buscarAutor").value);
 }
 
 document.getElementById("btn_regresarUsuario").onclick=function(){
@@ -769,8 +898,9 @@ document.getElementById("btn_regresarUsuario").onclick=function(){
     document.getElementById("Index").style.display="block";
     document.getElementById("Administracion").style.display="none";
     document.getElementById("PaginaUsuario").style.display="none";
+    document.getElementById("usuarioLogin").value = "";
+    document.getElementById("usuarioContra").value = "";
 }
 
 llenarOrtogonal();
-console.log("matrizFantasia");
 

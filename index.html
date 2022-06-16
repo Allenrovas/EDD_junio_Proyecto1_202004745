@@ -83,7 +83,7 @@
                 <div class="text-center">
                     <h2 class="section-heading text-uppercase">Top 5</h2>
                     <h3 class="section-subheading text-muted">Los 5 usuarios con más libros.</h3>
-                    <div id="graficas"></div>
+                    <div id="Top_Usuarios"></div>
                 </div>
             </div>
         </section>
@@ -341,17 +341,91 @@
         </section>
     </div>
 
-    <!-- Usuario -->
+    <!-- Librera Usuario -->
 
     <div id="PaginaUsuario" style="display: none;">
-        <section class="form-usuario">
-            <h5>Usuario</h5>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="a">Cargar Usuarios</button>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="b">Cargar Libros</button>
-            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="c">Cargar Autores</button>
+        <section class ="form-usuario">
+            <h1>Usuario</h1>
+            <br></br>
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_autor">Autores</button>
+            <br></br>
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_librera" style="display: none;">Librera</button>
+            <br></br>
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_libros">Libros</button>
+            <br></br>
             <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_regresarUsuario">Regresar</button>
         </section>
+        <section id="form-autor" class="form-autor" style="display: none;">
+            <h1>Autores</h1>
+            <br></br>
+            <br></br>
+            <h2 style="font-weight: bold;">Información de Autores</h2>
+            <br></br>
+            <input class="controls" type="text" name="buscarAutor" id="buscarAutor" value="" placeholder="Buscar Autor">
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_BuscarAutor">Buscar</button>
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_ResetearAutor">Resetear</button>
+            <br></br>
+            <br></br>
+            <br></br>
+            <table tex-align="center">
+                <thead>
+                    <tr>
+                        <th colspan="1"style="background-color: #cca000; color: white;">DPI</th>
+                        <th colspan="1"style="background-color: #cca000; color: white;">Nombre</th>
+                        <th colspan="1"style="background-color: #cca000; color: white;">Correo</th>
+                        <th colspan="1"style="background-color: #cca000; color: white;">Telefono</th>
+                        <th colspan="1"style="background-color: #cca000; color: white;">Direccion</th>
+                        <th colspan="1"style="background-color: #cca000; color: white;">Biografía</th>
+                    </tr>
+                </thead>
+                <tbody id="tablaAutores"></tbody>
+            </table>
+            <br></br>
+            <br></br>
+            <div id="Arbol_Binario"></div>
+            <br></br>
+            <br></br>
+
+            
+        </section>
+        <section id="form-libros" class="form-libros" style="display: none;">
+            <h1>Libros</h1>
+        </section>
+        <section id="form-librera" class="form-librera" style="display: block;">
+            <h1>Librera</h1>
+            <br></br>
+            <br></br>
+            <h2 style="font-weight: bold;">Libreras </h2>
+            <br></br>
+            <h3>Clasificación Fantasía</h3>
+            <br></br>
+            <h5>Librera de Fantasía</h5>
+            <br></br>
+            <div id="Clasificacion_Fantasia"></div>
+            <br></br>
+            <h5>Modelo lógico</h5>
+            <br></br>
+            <div id="Logico_Fantasia"></div>
+            <br></br>
+            <h3>Clasificación Thriller</h3>
+            <br></br>
+            <h5>Librera de Thriller</h5>
+            <br></br>
+            <div id="Clasificacion_Thriller"></div>
+            <br></br>
+            <h5>Modelo lógico</h5>
+            <br></br>
+            <div id="Logico_Thriller"></div>
+            <br></br>
+            <h5>Pila de un Libro</h5>
+            <br></br>
+            <input class="controls" type="text" name="buscarLibro" id="buscarLibro" value="" placeholder="Buscar Libro">
+            <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_BuscarLibro">Buscar</button>
+            <div id="Pila_Libros"></div>
+        </section>
     </div>
+
+    
 
     
 
