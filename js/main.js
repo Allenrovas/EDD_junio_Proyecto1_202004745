@@ -77,7 +77,7 @@ class ListaTop5{
         return null;
     }
 
-    CambiarTop5(nombre, cantidad, usuario){
+    CambiarTop5(_nombre, cantidad, usuario){
         var actual = this.cabeza;
         while(actual != null){
             if(actual.usuario == usuario){
@@ -299,10 +299,14 @@ class Nodo_Celda{
         this.coordenadaX = x;
         this.coordenadaY = y;
         this.libro = libro;
+        this.pila = new Lista_Pila();
         this.arriba = null;
         this.abajo = null;
         this.izquierda = null;
         this.derecha = null;
+    }
+    agregarPila(pila){
+        this.pila.insertar(pila);
     }
     setArriba(arriba){
         this.arriba = arriba;
@@ -431,17 +435,64 @@ class Matriz_Dispersa{
             
     }
 
-    modificar(columna,fila,libro){
-        var Nodo = this.filas.getCabecera(columna).getAcceso();
+    modificar(fila,columna,libro){
+        var Nodo = this.filas.getCabecera(fila).getAcceso();
         while (Nodo != null){
-            if (Nodo.coordenadaX == columna && Nodo.coordenadaY == fila){
+            if (Nodo.coordenadaX == fila && Nodo.coordenadaY == columna){
                 Nodo.libro = libro;
                 break;
             }
             Nodo = Nodo.getDerecha();
         }
-
     }
+
+    agregarPilaMatriz(fila,columna,libro,cantidad){
+        var Nodo = this.filas.getCabecera(fila).getAcceso();
+        while (Nodo != null){
+            if (Nodo.coordenadaX == fila && Nodo.coordenadaY == columna){
+                for (var j = 0; j < cantidad; j++) {
+                    Nodo.pila.insertar(libro);
+                }
+                console.log("Pila agregada");
+                break;
+            }
+            Nodo = Nodo.getDerecha();
+        }
+    }
+
+    buscar(libro){
+        var Contador = 0;
+        var contenido = "";
+        var res = document.querySelector("#Pila_Libros");
+        while (Contador<=25){        
+            Contador += 1;
+            try{
+                var Nodo = this.filas.getCabecera(Contador).getAcceso();
+            }catch(e){
+                console.log("No existe");
+            }
+            while (Nodo != null){
+                if (Nodo.libro == libro){
+                    var cantidad = Nodo.pila.contar();
+                    contenido +=
+                    '<table tex-align="center">'+
+                    "<thead>"+
+                    "<tr>"+'<th colspan="1"style="background-color: #cca000; color: white;">'+"Pila de "+libro+'</th>'+
+                    "</tr></thead>"+
+                    "<tbody>"
+                    for (var i = 0; i < cantidad; i++) {
+                        contenido +="<tr>"+"<td>Libro "+(i+1)+"</td>"+"</tr>"
+                        
+                    }        
+                    contenido += "</tbody>"+"</table><br><br></br></br>"
+                    res.innerHTML = contenido;
+                    break;
+                }
+                Nodo = Nodo.getDerecha();
+            }
+        }
+    }
+
 
     graficarNeato(){
         var contenido = "digraph G{";
@@ -449,14 +500,14 @@ class Matriz_Dispersa{
         contenido += 'node[shape=box, width=0.7, height=0.7, fontname="Arial", fillcolor="white", style=filled]'+
         'edge[style = "bold"]'+
         'graph[rankdir = "TB"]'+
-        "node[label = \"Raíz" + " " +'" fillcolor="darkolivegreen1" pos = "-1,1!"]raiz;';
+        "node[label = \"Raíz" + " " +'"  fillcolor="lightblue" pos = "-1,1!"]raiz;';
         contenido += 'label = "\nMATRIZ" \nfontname="Arial Black" \nfontsize="25pt" \n\n';
        
 
         var pivote = this.filas.primero;
         var posx = 0;
         while(pivote != null){
-            contenido += '\n\tnode[label = "F'+pivote.id+'" fillcolor="azure3" pos="-1,-'+posx+'!" shape=box fontsize=8]x'+pivote.id+';';
+            contenido += '\n\tnode[label = "Fila '+pivote.id+'" fillcolor="azure3" pos="-1,-'+posx+'!" shape=box fontsize=9]x'+pivote.id+';';
             pivote = pivote.siguiente;
             posx += 1;
         }
@@ -472,7 +523,7 @@ class Matriz_Dispersa{
         var posy = 0;
 
         while(pivotey != null){
-            contenido += '\n\tnode[label = "C'+pivotey.id+'" fillcolor="azure3" pos="'+posy+',1!" shape=box]y'+pivotey.id+';';
+            contenido += '\n\tnode[label = "Columna '+pivotey.id+'" fillcolor="azure3" pos="'+posy+',1!" shape=box]y'+pivotey.id+';';
             pivotey = pivotey.siguiente;
             posy += 1;
         }
@@ -531,13 +582,8 @@ class Matriz_Dispersa{
             pivote = pivote.siguiente;
         }
         contenido += '\n}';
-         //--- se genera DOT y se procede a ecjetuar el comando
         
         return contenido;
-        /*d3.select("#graficas").graphviz()
-            .width(1200)
-            .height(900)
-            .renderDot(contenido)*/
 
     }
 }
@@ -672,6 +718,48 @@ class Arbol{
 
 }
 
+//Pila
+class NodoPila{
+    constructor(libro){
+        this.libro = libro;
+        this.siguiente = null;
+    }
+}
+
+class Lista_Pila{
+    constructor(){
+        this.primero = null;
+    }
+
+    insertar(libro){
+        var nuevo = new NodoPila(libro);
+        nuevo.libro = libro;
+        if(this.primero == null){
+            nuevo.siguiente = null;
+            this.primero = nuevo;
+        }else{
+            nuevo.siguiente = this.primero;
+            this.primero = nuevo;
+        }
+    }
+
+    eliminar(){
+        var auxiliar = this.primero;
+        auxiliar.siguiente = null;
+        auxiliar = null;
+    }
+
+    contar(){
+        var contador = 0;
+        var auxiliar = this.primero;
+        while(auxiliar != null){
+            contador++;
+            auxiliar = auxiliar.siguiente;
+        }
+        return contador;
+    }
+}
+
 
 var matrizThriller = new Matriz_Dispersa();
 var matrizFantasia = new Matriz_Dispersa();
@@ -789,14 +877,16 @@ function CargarLibros(contenido){
     for (var i = 0; i < datos.length; i++) {
         listaLibros.InsertarLibro(datos[i].isbn,datos[i].nombre_autor,datos[i].nombre_libro,datos[i].cantidad,datos[i].fila,datos[i].columna,datos[i].paginas,datos[i].categoria);
         if(datos[i].categoria == "Fantasia"){
-            matrizFantasia.modificar(datos[i].columna,datos[i].fila,datos[i].nombre_libro);
+            matrizFantasia.modificar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
+            matrizFantasia.agregarPilaMatriz(datos[i].fila,datos[i].columna,datos[i].nombre_libro,datos[i].cantidad);
         }else if(datos[i].categoria == "Thriller"){
-            matrizThriller.insertar(datos[i].columna,datos[i].fila,datos[i].nombre_libro);
+            matrizThriller.insertar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
+            matrizThriller.agregarPilaMatriz(datos[i].fila,datos[i].columna,datos[i].nombre_libro,datos[i].cantidad);
         }
 
     }
     alert("Libros cargados");
-    try{
+    /*try{
         var contenido_fantasia= matrizFantasia.graficarNeato();
         d3.select("#Clasificacion_Fantasia").graphviz()
             .width(1200)
@@ -821,7 +911,7 @@ function CargarLibros(contenido){
             .renderDot(contenido_thriller)
     }catch(error){
         console.error(error);
-    }
+    }*/
 }
 
 function CargarAutores(contenido){
@@ -902,5 +992,14 @@ document.getElementById("btn_regresarUsuario").onclick=function(){
     document.getElementById("usuarioContra").value = "";
 }
 
-llenarOrtogonal();
+document.getElementById("btn_BuscarLibro").onclick=function(){
+    try{
+        matrizFantasia.buscar(document.getElementById("buscarLibro").value);
+        matrizThriller.buscar(document.getElementById("buscarLibro").value);
+    }catch(error){
+        console.error(error);
+    }
 
+}
+
+llenarOrtogonal();

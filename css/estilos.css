@@ -90,15 +90,9 @@
   }
 
   #Pila_Libros{
-    width: 1000px;
-    height: 1000px;
-    background: #cca000;
     margin: auto;
     margin-top: 50px;
-    box-shadow: 7px 13px 37px #000;
     padding: 20px 30px;
-    border-top: 4px solid #4e4d4d;
-    color: white;
   }
 
 
@@ -142,7 +136,7 @@
 
   .form-librera {
     width: 1200px;
-    height: 6500px;
+    height: 5400px;
     background: #4e4d4d;
     margin: auto;
     margin-top: 50px;
@@ -154,7 +148,7 @@
 
   .form-libros {
     width: 1200px;
-    height: 5400px;
+    height: 700px;
     background: #4e4d4d;
     margin: auto;
     margin-top: 50px;
