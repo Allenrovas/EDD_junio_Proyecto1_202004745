@@ -1,12 +1,9 @@
 //Libros
 class Libro{
-    constructor(isbn, nombre_autor, nombre_libro, cantidad, fila, columna, paginas, categoria){
+    constructor(isbn, nombre_autor, nombre_libro, paginas, categoria){
         this.isbn = isbn;
         this.nombre_autor = nombre_autor;
         this.nombre_libro = nombre_libro;
-        this.cantidad = cantidad;
-        this.fila = fila;
-        this.columna = columna;
         this.paginas = paginas;
         this.categoria = categoria;
         this.siguiente = null;
@@ -21,8 +18,8 @@ class ListaLibros{
         this.contador = 0;
     }
 
-    InsertarLibro(isbn, nombre_autor, nombre_libro, cantidad, fila, columna, paginas, categoria){
-        var nuevo = new Libro(isbn, nombre_autor, nombre_libro, cantidad, fila, columna, paginas, categoria);
+    InsertarLibro(isbn, nombre_autor, nombre_libro, paginas, categoria ){
+        var nuevo = new Libro(isbn, nombre_autor, nombre_libro, paginas, categoria);
         if(this.cabeza == null){
             this.cabeza = nuevo;
             this.cola = nuevo;
@@ -34,6 +31,128 @@ class ListaLibros{
         this.contador++;
         
     }
+
+    Tabla_Libros(){
+        var respuesta = document.getElementById("tablaLibros");
+        respuesta.innerHTML = "";
+        var aux = this.cabeza;
+        while(aux != null){
+            respuesta.innerHTML +=
+            "<tr>"+
+                "<td>"+aux.isbn+"</td>"+
+                "<td>"+aux.nombre_autor+"</td>"+
+                "<td>"+aux.nombre_libro+"</td>"+
+                "<td>"+aux.paginas+"</td>"+
+                "<td>"+aux.categoria+"</td>"+
+            "</tr>";
+            aux = aux.siguiente;
+        }
+    }
+   
+
+    Bubble(){
+        if(this.contador>1){
+            while(true){
+                var actual = this.cabeza;
+                var i = null;
+                var j = this.cabeza.siguiente;
+                var cambio = false;
+                while(j != null){
+                    if(actual.nombre_libro > j.nombre_libro){
+                        cambio = true;
+                        if (i != null){
+                            var tmp = j.siguiente;
+                            i.siguiente = j;
+                            j.siguiente = actual;
+                            actual.siguiente = tmp;
+                        }else{
+                            var tmp2 = j.siguiente;
+                            this.cabeza = j;
+                            j.siguiente = actual;
+                            actual.siguiente = tmp2;
+                        }
+                        i = j;
+                        j = actual.siguiente;
+                    }else{
+                        i = actual;
+                        actual = j;
+                        j = j.siguiente;
+                    }
+                }if (!cambio){
+                    break;
+                }
+            }
+        }
+    }
+
+    imprimir(){
+        var aux = this.cabeza;
+        while(aux != null){
+            console.log(aux.nombre_libro);
+            aux = aux.siguiente;
+        }
+    }
+
+    Particion(l,h){
+        // set pivot as h element
+        let x = h.nombre_libro;
+          
+        // similar to i = l-1 for array implementation
+        let i = l.anterior;
+          
+        // Similar to "for (int j = l; j <= h- 1; j++)"
+        for(let j=l; j!=h; j=j.siguiente)
+        {
+            if(j.nombre_libro >= x)
+            {
+                // Similar to i++ for array
+                i = (i == null) ? l : i.siguiente;
+                let temp = i.nombre_libro;
+                let temp2 = i.isbn;
+                let temp3 = i.nombre_autor;
+                let temp4 = i.paginas;
+                let temp5 = i.categoria;
+
+                i.nombre_libro = j.nombre_libro;
+                i.isbn = j.isbn;
+                i.nombre_autor = j.nombre_autor;
+                i.paginas = j.paginas;
+                i.categoria = j.categoria;
+
+                j.nombre_libro = temp;
+                j.isbn = temp2;
+                j.nombre_autor = temp3;
+                j.paginas = temp4;
+                j.categoria = temp5;
+            }
+        }
+        i = (i == null) ? l : i.siguiente;  // Similar to i++
+        let temp = i.nombre_libro;
+        let temp2 = i.isbn;
+        let temp3 = i.nombre_autor;
+        let temp4 = i.paginas;
+        let temp5 = i.categoria;
+        i.nombre_libro = h.nombre_libro;
+        i.isbn = h.isbn;
+        i.nombre_autor = h.nombre_autor;
+        i.paginas = h.paginas;
+        i.categoria = h.categoria;
+        h.nombre_libro = temp;
+        h.isbn = temp2;
+        h.nombre_autor = temp3;
+        h.paginas = temp4;
+        h.categoria = temp5;
+        return i;
+    }
+
+    Sort(cabeza,cola){
+        if(cola != null && cabeza != cola && cabeza != cola.siguiente){
+            var temp = this.Particion(cabeza,cola);
+            this.Sort(cabeza,temp.anterior);
+            this.Sort(temp.siguiente,cola);
+        }
+    }
+
 }
 
 class Top5Usuario{
@@ -453,7 +572,6 @@ class Matriz_Dispersa{
                 for (var j = 0; j < cantidad; j++) {
                     Nodo.pila.insertar(libro);
                 }
-                console.log("Pila agregada");
                 break;
             }
             Nodo = Nodo.getDerecha();
@@ -873,9 +991,8 @@ function CargarUsuarios(contenido){
 
 function CargarLibros(contenido){
     var datos = JSON.parse(contenido);
-    console.log(datos);
     for (var i = 0; i < datos.length; i++) {
-        listaLibros.InsertarLibro(datos[i].isbn,datos[i].nombre_autor,datos[i].nombre_libro,datos[i].cantidad,datos[i].fila,datos[i].columna,datos[i].paginas,datos[i].categoria);
+        listaLibros.InsertarLibro(datos[i].isbn,datos[i].nombre_autor,datos[i].nombre_libro,datos[i].paginas,datos[i].categoria);
         if(datos[i].categoria == "Fantasia"){
             matrizFantasia.modificar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
             matrizFantasia.agregarPilaMatriz(datos[i].fila,datos[i].columna,datos[i].nombre_libro,datos[i].cantidad);
@@ -912,6 +1029,9 @@ function CargarLibros(contenido){
     }catch(error){
         console.error(error);
     }*/
+    //listaLibros.Bubble();
+    listaLibros.Tabla_Libros("Bubble");
+    
 }
 
 function CargarAutores(contenido){
@@ -999,6 +1119,17 @@ document.getElementById("btn_BuscarLibro").onclick=function(){
     }catch(error){
         console.error(error);
     }
+
+}
+
+document.getElementById("btn_ordenarDescendente").onclick=function(){
+    listaLibros.Sort(listaLibros.cabeza,listaLibros.cola);
+    listaLibros.Tabla_Libros();
+}
+
+document.getElementById("btn_ordenarAscendente").onclick=function(){
+    listaLibros.Bubble();
+    listaLibros.Tabla_Libros();
 
 }
 

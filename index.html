@@ -411,13 +411,68 @@
                         <th colspan="1"style="background-color: #cca000; color: white;">ISBN</th>
                         <th colspan="1"style="background-color: #cca000; color: white;">Autor</th>
                         <th colspan="1"style="background-color: #cca000; color: white;">Nombre</th>
-                        <th colspan="1"style="background-color: #cca000; color: white;">Cantidad</th>
                         <th colspan="1"style="background-color: #cca000; color: white;">Páginas</th>
                         <th colspan="1"style="background-color: #cca000; color: white;">Categoría</th>
                     </tr>
                 </thead>
                 <tbody id="tablaLibros"></tbody>
             </table>
+            <br></br>
+            <br></br>
+            <br></br>
+            <div id="Ordenamiento_Quicksort" style="display: none;">
+               <h1>Ordenamiento QuickSort</h1> 
+                <br></br>
+                <h4>Particion(l,h){ <br>
+                    let x = h.nombre_libro;<br>
+                    let i = l.anterior;<br>
+                    for(let j=l; j!=h; j=j.siguiente){<br>
+                        if(j.nombre_libro <= x){<br>
+                            i = (i == null) ? l : i.siguiente;<br>
+                            let temp = i.nombre_libro;<br>
+                            let temp2 = i.isbn;<br>
+                            let temp3 = i.nombre_autor;<br>
+                            let temp4 = i.paginas;<br>
+                            let temp5 = i.categoria;<br>
+                            i.nombre_libro = j.nombre_libro;<br>
+                            i.isbn = j.isbn;<br>
+                            i.nombre_autor = j.nombre_autor;<br>
+                            i.paginas = j.paginas;<br>
+                            i.categoria = j.categoria;<br>
+                            j.nombre_libro = temp;<br>
+                            j.isbn = temp2;<br>
+                            j.nombre_autor = temp3;<br>
+                            j.paginas = temp4;<br>
+                            j.categoria = temp5;<br>
+                        }<br>
+                    }<br>
+                    i = (i == null) ? l : i.siguiente; <br>
+                    let temp = i.nombre_libro;<br>
+                    let temp2 = i.isbn;<br>
+                    let temp3 = i.nombre_autor;<br>
+                    let temp4 = i.paginas;<br>
+                    let temp5 = i.categoria;<br>
+                    i.nombre_libro = h.nombre_libro;<br>
+                    i.isbn = h.isbn;<br>
+                    i.nombre_autor = h.nombre_autor;<br>
+                    i.paginas = h.paginas;<br>
+                    i.categoria = h.categoria;<br>
+                    h.nombre_libro = temp;<br>
+                    h.isbn = temp2;<br>
+                    h.nombre_autor = temp3;<br>
+                    h.paginas = temp4;<br>
+                    h.categoria = temp5;<br>
+                    return i;<br>
+                }<br>
+            
+                Sort(cabeza,cola){<br>
+                    if(cola != null && cabeza != cola && cabeza != cola.siguiente){<br>
+                        var temp = this.Particion(cabeza,cola);<br>
+                        this.Sort(cabeza,temp.anterior);<br>
+                        this.Sort(temp.siguiente,cola);<br>
+                    }<br>
+                }</h4>
+            </div>
             <br></br>
             <br></br>
             <br></br>
