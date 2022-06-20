@@ -36,9 +36,9 @@
                     <ul class="navbar-nav text-uppercase ms-auto py-4 py-lg-0">
                         <li class="nav-item"><a class="nav-link" href="#services">Misión</a></li>
                         <li class="nav-item"><a class="nav-link" href="#portfolio">Visión</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#top5">Top 5</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#top5">Top</a></li>
                         <li class="nav-item"><a class="nav-link" href="#about">Acerca de </a></li>
-                        <li class="nav-item"><a class="nav-link" href="#team">Desarrolado por</a></li>
+                        <li class="nav-item"><a class="nav-link" href="#team">Desarrollado por</a></li>
                         <li class="nav-item"><a class="nav-link" href="#info">Información</a></li>
                     </ul>
                 </div>
@@ -81,8 +81,19 @@
         <section class="page-section" id="top5">
             <div class="container">
                 <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Top 5</h2>
-                    <h3 class="section-subheading text-muted">Los 5 usuarios con más libros.</h3>
+                    <h2 class="section-heading text-uppercase">Top</h2>
+                    <h3 class="section-subheading text-muted">Los usuarios con más libros.</h3>
+                    <br></br>
+                    <table tex-align="center">
+                        <thead>
+                            <tr>
+                                <th colspan="1"style="background-color: #cca000; color: white;">Nombre</th>
+                                <th colspan="1"style="background-color: #cca000; color: white;">Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tablaTop5"></tbody>
+                    </table>
+                    <br></br>
                     <div id="Top_Usuarios"></div>
                 </div>
             </div>
@@ -153,7 +164,7 @@
         <section class="page-section bg-light" id="team">
             <div class="container">
                 <div class="text-center">
-                    <h2 class="section-heading text-uppercase">Desarrolado por</h2>
+                    <h2 class="section-heading text-uppercase">Desarrollado por</h2>
                     <h3 class="section-subheading text-muted">Programa realizado desde su concepción hasta su finalización.
                     </h3>
                 </div>
@@ -338,7 +349,18 @@
             <br></br>
             <br></br>
             <button class="btn btn-primary btn-xl text-uppercase"  type="submit" name=""  id="btn_regresarAdministracion">Regresar</button>
+            <br></br>
+            <br></br>
+            <h5>Cola de Disponibilidad</h5>
+            <br></br>
+            <div id="Cola_Disponibilidad"></div>
+            <br></br>
+            <h5>Lista de Usuarios</h5>
+            <br></br>
+            <div id="Lista_Listas_Usuarios"></div>
+            <br></br>
         </section>
+        <br></br>
     </div>
 
     <!-- Librera Usuario -->
@@ -471,6 +493,48 @@
                         this.Sort(cabeza,temp.anterior);<br>
                         this.Sort(temp.siguiente,cola);<br>
                     }<br>
+                }</h4>
+            </div>
+            <div id="Ordenamiento_Burbuja" style="display: block;">
+                <h1>Ordenamiento Burbuja</h1>
+                <br></br>
+                <h4>Bubble(){<br></br>
+                    if(this.contador>1){<br></br>
+                        var Cambio = 0;<br></br>
+                        var i = null;<br></br>
+                        if (this.cabeza == null){<br></br>
+                            return;<br></br>
+                        }<br></br>
+                        while(true){<br></br>
+                            Cambio = 0;<br></br>
+                            var j = this.cabeza;<br></br>
+                            while(j.siguiente != i){<br></br>
+                                if(j.nombre_libro > j.siguiente.nombre_libro){<br></br>
+                                    var temp = j.nombre_libro;<br></br>
+                                    var temp2 = j.isbn;<br></br>
+                                    var temp3 = j.nombre_autor;<br></br>
+                                    var temp4 = j.paginas;<br></br>
+                                    var temp5 = j.categoria;<br></br>
+                                    j.nombre_libro = j.siguiente.nombre_libro;<br></br>
+                                    j.isbn = j.siguiente.isbn;<br></br>
+                                    j.nombre_autor = j.siguiente.nombre_autor;<br></br>
+                                    j.paginas = j.siguiente.paginas;<br></br>
+                                    j.categoria = j.siguiente.categoria;<br></br>
+                                    j.siguiente.nombre_libro = temp;<br></br>
+                                    j.siguiente.isbn = temp2;<br></br>
+                                    j.siguiente.nombre_autor = temp3;<br></br>
+                                    j.siguiente.paginas = temp4;<br></br>
+                                    j.siguiente.categoria = temp5;<br></br>
+                                    Cambio = 1;<br></br>
+                                }<br></br>
+                                j = j.siguiente;<br></br>
+                            }<br></br>
+                            i = j;<br></br>
+                            if(Cambio == 0){<br></br>
+                                break;<br></br>
+                            }<br></br>
+                        }<br></br>
+                    }<br></br>
                 }</h4>
             </div>
             <br></br>

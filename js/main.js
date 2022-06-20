@@ -49,36 +49,39 @@ class ListaLibros{
         }
     }
    
-
     Bubble(){
         if(this.contador>1){
+            var Cambio = 0;
+            var i = null;
+            if (this.cabeza == null){
+                return;
+            }
             while(true){
-                var actual = this.cabeza;
-                var i = null;
-                var j = this.cabeza.siguiente;
-                var cambio = false;
-                while(j != null){
-                    if(actual.nombre_libro > j.nombre_libro){
-                        cambio = true;
-                        if (i != null){
-                            var tmp = j.siguiente;
-                            i.siguiente = j;
-                            j.siguiente = actual;
-                            actual.siguiente = tmp;
-                        }else{
-                            var tmp2 = j.siguiente;
-                            this.cabeza = j;
-                            j.siguiente = actual;
-                            actual.siguiente = tmp2;
-                        }
-                        i = j;
-                        j = actual.siguiente;
-                    }else{
-                        i = actual;
-                        actual = j;
-                        j = j.siguiente;
+                Cambio = 0;
+                var j = this.cabeza;
+                while(j.siguiente != i){
+                    if(j.nombre_libro > j.siguiente.nombre_libro){
+                        var temp = j.nombre_libro;
+                        var temp2 = j.isbn;
+                        var temp3 = j.nombre_autor;
+                        var temp4 = j.paginas;
+                        var temp5 = j.categoria;
+                        j.nombre_libro = j.siguiente.nombre_libro;
+                        j.isbn = j.siguiente.isbn;
+                        j.nombre_autor = j.siguiente.nombre_autor;
+                        j.paginas = j.siguiente.paginas;
+                        j.categoria = j.siguiente.categoria;
+                        j.siguiente.nombre_libro = temp;
+                        j.siguiente.isbn = temp2;
+                        j.siguiente.nombre_autor = temp3;
+                        j.siguiente.paginas = temp4;
+                        j.siguiente.categoria = temp5;
+                        Cambio = 1;
                     }
-                }if (!cambio){
+                    j = j.siguiente;
+                }
+                i = j;
+                if(Cambio == 0){
                     break;
                 }
             }
@@ -93,7 +96,7 @@ class ListaLibros{
         }
     }
 
-    Particion(l,h){
+   Particion(l,h){
         // set pivot as h element
         let x = h.nombre_libro;
           
@@ -151,14 +154,13 @@ class ListaLibros{
             this.Sort(cabeza,temp.anterior);
             this.Sort(temp.siguiente,cola);
         }
-    }
-
+    }  
 }
 
 class Top5Usuario{
-    constructor(nombre, cantidad, usuario){
+    constructor(nombre, usuario){
         this.nombre = nombre;
-        this.cantidad = cantidad;
+        this.cantidad = 0;
         this.usuario = usuario;
         this.siguiente = null;
         this.anterior = null;
@@ -171,8 +173,8 @@ class ListaTop5{
         this.cola = null;
         this.contador = 0;
     }
-    InsertarUsuario(nombre, cantidad, usuario){
-        var nuevo = new Top5Usuario(nombre, cantidad,usuario);
+    InsertarUsuario(nombre, usuario){
+        var nuevo = new Top5Usuario(nombre,usuario);
         if(this.cabeza == null){
             this.cabeza = nuevo;
             this.cola = nuevo;
@@ -196,11 +198,11 @@ class ListaTop5{
         return null;
     }
 
-    CambiarTop5(_nombre, cantidad, usuario){
+    CambiarTop5(usuario){
         var actual = this.cabeza;
         while(actual != null){
             if(actual.usuario == usuario){
-                actual.cantidad = cantidad;
+                actual.cantidad += 1;
                 break;
             }
             actual = actual.siguiente;
@@ -209,36 +211,75 @@ class ListaTop5{
 
     ordenarTop5(){
         if(this.contador>1){
+            var Cambio = 0;
+            var i = null;
+            if (this.cabeza == null){
+                return;
+            }
             while(true){
-                var actual = this.cabeza;
-                var i = null;
-                var j = this.cabeza.siguiente;
-                var cambio = false;
-                while(j != null){
-                    if(actual.cantidad > j.cantidad){
-                        cambio = true;
-                        if (i != null){
-                            var tmp = j.siguiente;
-                            i.siguiente = j;
-                            j.siguiente = actual;
-                            actual.siguiente = tmp;
-                        }else{
-                            var tmp2 = j.siguiente;
-                            this.cabeza = j;
-                            j.siguiente = actual;
-                            actual.siguiente = tmp2;
-                        }
-                        i = j;
-                        j = actual.siguiente;
-                    }else{
-                        i = actual;
-                        actual = j;
-                        j = j.siguiente;
+                Cambio = 0;
+                var j = this.cabeza;
+                while(j.siguiente != i){
+                    if(j.cantidad < j.siguiente.cantidad){
+                        var temp = j.cantidad;
+                        var temp2 = j.usuario;
+                        var temp3 = j.nombre;
+                        j.cantidad = j.siguiente.cantidad;
+                        j.usuario = j.siguiente.usuario;
+                        j.nombre = j.siguiente.nombre;
+                        j.siguiente.cantidad = temp;
+                        j.siguiente.usuario = temp2;
+                        j.siguiente.nombre = temp3;
+                        Cambio = 1;
                     }
-                }if (!cambio){
+                    j = j.siguiente;
+                }
+                i = j;
+                if(Cambio == 0){
                     break;
                 }
             }
+        }
+    }
+
+    graficarTop5(){
+        var contenido = "";
+        contenido += "digraph G {\n"+
+        "bgcolor=\"none\" label=\"Top de clientes\"layout=dot \n"+
+        "node [shape=record, style=filled, fontcolor = white,color=black, fillcolor=darkgoldenrod2];\n"
+        var actual = this.cabeza;
+        var nombreNodos = "";
+        var conexiones = "";
+
+        while(actual != null){
+            nombreNodos += "nodo"+actual.usuario+'[label=\"'+"Nombre: "+actual.nombre+' \n'+"Cantidad: "+actual.cantidad+'\n"];\n';
+            if(actual.siguiente != null){
+                conexiones += "nodo"+actual.usuario+"->nodo"+actual.siguiente.usuario+"[dir=both];\n";
+            }    
+            actual = actual.siguiente;
+        }
+        contenido += nombreNodos;
+        contenido += conexiones;
+        contenido += "rankdir=LR;\n}";
+        
+        d3.select("#Top_Usuarios").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(contenido)
+        
+    }
+
+    TablaTop5(){
+        var respuesta = document.getElementById("tablaTop5");
+        respuesta.innerHTML = "";
+        var aux = this.cabeza;
+        while(aux != null){
+            respuesta.innerHTML +=
+            "<tr>"+
+                "<td>"+aux.nombre+"</td>"+
+                "<td>"+aux.cantidad+"</td>"+
+            "</tr>";
+            aux = aux.siguiente;
         }
     }
 }
@@ -257,20 +298,24 @@ class Usuario{
         this.abajo=null;
     }
 }
+
 //Libros Usuarios
 class LibrosUsuarios{
     constructor(nombre,usuario){
         this.nombre=nombre;
         this.usuario=usuario;
+        this.cantidad=0;
         this.siguiente=null;
     }
 }
+
 //ListasUsuarios
 class ListaUsuarios{
     constructor(){
         this.cabeza = null;
         this.ultimo = null;
         this.tamanio = 0;
+        this.tamanioLibros = 0;
     }
     //Agregar Usuario
     InsertarUsuario(dpi,nombre_completo,nombre_usuario,correo,rol,contrasenia,telefono){
@@ -278,12 +323,14 @@ class ListaUsuarios{
         if(this.cabeza == null){
             this.cabeza = nuevo;
             this.ultimo = nuevo;
+            this.tamanio++;
         }else{
             this.ultimo.siguiente = nuevo;
             this.ultimo = nuevo;
             this.ultimo.siguiente = this.cabeza.siguiente;
+            this.tamanio++;
         }
-        this.tamanio++;
+        
     }
     //Insertar Libros
     InsertarLibros(nombre,usuario){
@@ -291,14 +338,30 @@ class ListaUsuarios{
         while(temporarlusuario != null){
             if (temporarlusuario.nombre_usuario == usuario){
                 var nuevoLibro = new LibrosUsuarios(nombre,usuario);
+                nuevoLibro.cantidad = this.tamanioLibros;
                 var inicioLibros = temporarlusuario.abajo;
                 temporarlusuario.abajo = nuevoLibro;
                 nuevoLibro.siguiente = inicioLibros;
+                this.tamanioLibros++;
                 break;
             }
+            temporarlusuario = temporarlusuario.siguiente;
         }
-        temporarlusuario = temporarlusuario.siguiente;
+        
         //No se encontró usuario
+    }
+    //Buscar Usuario
+    BuscarUsuario(usuario){
+        var actual = this.cabeza;
+        if(actual != null){
+            for (var i = 0; i < this.tamanio; i++) {
+                if(actual.nombre_usuario == usuario){
+                    return actual;
+                }
+                actual = actual.siguiente;
+            }
+        }
+        return null;
     }
 
     RecorrerMenu(usuario,contrasenia){
@@ -322,6 +385,86 @@ class ListaUsuarios{
                 actual = actual.siguiente;
             }
         }
+    }
+
+    graficarExtra(actual){
+        var nodo = actual;
+        var contenido = "";
+        var Nodos = "";
+        var conexiones = "";
+        contenido += "subgraph cluster_"+nodo.dpi+nodo.nombre_usuario+"{\n"+
+        "style=filled;"+
+        "color=lightgrey;"+
+        "node [style=filled,color=white];";
+        var auxiliar = nodo.abajo;
+        while(auxiliar != null){
+            Nodos += "nodo"+auxiliar.cantidad+nodo.nombre_usuario+'[label=\"'+"Nombre: "+auxiliar.nombre+'\n"];\n';
+            if(auxiliar.siguiente != null){
+                conexiones += "nodo"+auxiliar.cantidad+nodo.nombre_usuario+"->nodo"+auxiliar.siguiente.cantidad+nodo.nombre_usuario+";\n";
+            }
+            auxiliar = auxiliar.siguiente;
+        }
+        contenido += Nodos;
+        contenido += conexiones;
+        contenido += "\n}";
+        return contenido;
+    }
+
+    graficarUsuarios(){
+        var contenido = "";
+        contenido += "digraph G {\n"+
+        'bgcolor=\"none\" layout=dot label="Lista_Libros" \n'+
+        "node [shape=square,fontname=\"Century Gothic\", style=filled, color=black, fillcolor=\"#f0b35d\"];\n"
+        
+
+
+        var actual = this.cabeza;
+        var nombreNodos = "";
+        var conexiones = "";
+        var UsuarioCabeza = this.cabeza.dpi;
+        var cont = 0;
+        var subgrafo = "";
+        var conexsubgrafo = "";
+        if (actual != null){
+            while(cont < this.tamanio){
+                if(cont == this.tamanio-1){
+                    nombreNodos += "nodo"+actual.dpi+"[fillcolor=\"#f9c74f\" label=\" Nombre: "+ actual.nombre_completo + "\"];\n";
+                    var aux = actual;
+                    if (actual.abajo != null){
+                        subgrafo += this.graficarExtra(actual);
+                        conexsubgrafo += "nodo"+actual.dpi+"->nodo"+actual.abajo.cantidad+actual.nombre_usuario+";\n";
+                    }
+                    break;
+                }else{
+                    nombreNodos += "nodo"+actual.dpi+"[fillcolor=\"#f9c74f\" label=\" Nombre: "+ actual.nombre_completo + "\"];\n";
+                    conexiones += "nodo"+actual.dpi+"->nodo"+actual.siguiente.dpi+";\n";
+                    var aux = actual;
+                    if (actual.abajo != null){
+                        subgrafo += this.graficarExtra(actual);
+                        conexsubgrafo += "nodo"+actual.dpi+"->nodo"+actual.abajo.cantidad+actual.nombre_usuario+";\n";
+                    } 
+                }
+                actual = actual.siguiente;
+                cont++;
+                
+            }
+        }
+        conexiones += "nodo"+aux.dpi+"->nodo"+UsuarioCabeza+";\n";
+        contenido += nombreNodos;
+        contenido += conexiones;
+        contenido += subgrafo;
+        contenido += conexsubgrafo;
+
+        var actual = this.cabeza;
+        var contador = 0;
+        
+        contenido += "rankdir="+'"LR"'+ ";\n";
+        contenido += 'label=\"Lista de Usuarios\"'+";\n";
+        contenido += "}\n";
+        d3.select("#Lista_Listas_Usuarios").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(contenido)
     }
 }
 
@@ -348,7 +491,7 @@ class Lista_Cabecera{
     constructor(tipo){
         this.primero = null;
         this.ultimo = null;
-        this.tipo = tipo; //si son columnas o filas
+        this.tipo = tipo;
         this.size = 0;
     }
     getPrimero(){
@@ -361,19 +504,15 @@ class Lista_Cabecera{
             this.primero = nuevo;
             this.ultimo = nuevo;
         }else{
-            // ---- Insercion en ORDEN
-            // -- verificamos si el nuevo es menor que el primero
             if (nuevo.id < this.primero.id){
                 nuevo.siguiente = this.primero;
                 this.primero.anterior = nuevo;
                 this.primero = nuevo;
             }else if(nuevo.id > this.ultimo.id){
-                // -- verificamos si el nuevo es mayor que el ultimo
                 this.ultimo.siguiente = nuevo;
                 nuevo.anterior = this.ultimo;
                 this.ultimo = nuevo;
             }else{
-                // -- sino, recorremos la lista para buscar donde acomodarnos, entre el primero y el ultimo
                 var temporalCabecera = this.primero;
                 while(temporalCabecera != null){
                     if(nuevo.getId() < temporalCabecera.getId()){
@@ -534,24 +673,21 @@ class Matriz_Dispersa{
     }
 
     imprimir(){
-        let Contador = 1
-        let posicion = ""
-        while (true){
-            var inicio = new Nodo_Cabecera();
-            inicio = this.filas.getCabecera(Contador);
-            if (inicio == null){
-                break;
+        var Contador = 0;
+        while (Contador <= 25){
+            Contador += 1;
+            try{
+                var Nodo = this.filas.getCabecera(Contador).getAcceso();
+            }catch(e){
+                console.log("No se ha encontrado el libro aún");
             }
-            var tempo = inicio;
-            let posicion;
-            tempo = inicio.getAcceso();
-            while (tempo != null){
-                posicion = tempo.coordenadaX+","+tempo.coordenadaY+","+tempo.libro+";"
-                tempo = tempo.getDerecha()
+            while (Nodo != null){
+                console.log("X: " + Nodo.coordenadaX + " Y: " + Nodo.coordenadaY + " Libro: " + Nodo.pila);
+                console.log(Nodo.pila.contar());
+                Nodo = Nodo.getDerecha();
             }
-            Contador += 1
-        }
             
+        }
     }
 
     modificar(fila,columna,libro){
@@ -578,10 +714,56 @@ class Matriz_Dispersa{
         }
     }
 
+    comprarLibro(libro,cliente){
+        var Contador = 0;
+        var Comprobacion = false;
+        while (Contador <= 25){
+            Contador += 1;
+            try{
+                var Nodo = this.filas.getCabecera(Contador).getAcceso();
+            }catch(e){
+                console.log("No se ha encontrado el libro aún");
+            }
+            while (Nodo != null){
+                if (Nodo.libro == libro){
+                    var cantidad = Nodo.pila.contar();
+                    
+                    if (cantidad > 0){
+                        cantidad = cantidad - 1;
+                        Nodo.pila.eliminar();
+                        listaUsuarios.InsertarLibros(libro,cliente);
+                        var buscar = Lista_Top5.Buscar(cliente);
+                        if (buscar == null){
+                            var actual = listaUsuarios.BuscarUsuario(cliente);
+                            Lista_Top5.InsertarUsuario(actual.nombre_completo,cliente);
+                            Lista_Top5.CambiarTop5(cliente);
+                        }else{
+                            Lista_Top5.CambiarTop5(cliente);
+                        }
+                        Lista_Top5.ordenarTop5();
+                        Lista_Top5.graficarTop5();
+                        Lista_Top5.TablaTop5();
+                    }else{
+                        var auxiliar = listaUsuarios.BuscarUsuario(cliente);
+                        librosEnCola.insertar(libro,auxiliar.nombre_completo);
+                        librosEnCola.graficarCola();
+                    }
+                    Comprobacion = true;
+                    break;
+                }
+                Nodo = Nodo.getDerecha();
+            }if(Comprobacion == true){
+                break;
+            }
+        }
+
+    }
+
     buscar(libro){
         var Contador = 0;
         var contenido = "";
         var res = document.querySelector("#Pila_Libros");
+        var Comprobacion = false;
         while (Contador<=25){        
             Contador += 1;
             try{
@@ -604,13 +786,15 @@ class Matriz_Dispersa{
                     }        
                     contenido += "</tbody>"+"</table><br><br></br></br>"
                     res.innerHTML = contenido;
+                    Comprobacion = true;
                     break;
                 }
                 Nodo = Nodo.getDerecha();
+            }if(Comprobacion == true){
+                break;
             }
         }
     }
-
 
     graficarNeato(){
         var contenido = "digraph G{";
@@ -847,6 +1031,7 @@ class NodoPila{
 class Lista_Pila{
     constructor(){
         this.primero = null;
+        this.tamanio = 0;
     }
 
     insertar(libro){
@@ -859,31 +1044,93 @@ class Lista_Pila{
             nuevo.siguiente = this.primero;
             this.primero = nuevo;
         }
+        this.tamanio++;
     }
 
     eliminar(){
         var auxiliar = this.primero;
         auxiliar.siguiente = null;
         auxiliar = null;
+        this.tamanio--;
     }
 
     contar(){
-        var contador = 0;
-        var auxiliar = this.primero;
-        while(auxiliar != null){
-            contador++;
-            auxiliar = auxiliar.siguiente;
-        }
-        return contador;
+        return this.tamanio;
     }
 }
 
+//Cola
+class NodoCola{
+    constructor(libro,cliente){
+        this.libro = libro;
+        this.cliente = cliente;
+        this.codigoCliente = 0;
+        this.codigoLibro = null;
+        this.siguiente = null;
+        
+    }
+}
+
+class Lista_Cola{
+    constructor(){
+        this.primero = null;
+        this.ultimo = null;
+        this.contador = 0;
+    }
+    insertar(libro,cliente){
+        var nuevo = new NodoCola(libro,cliente);
+        nuevo.libro = libro;
+        nuevo.cliente = cliente;
+        nuevo.codigoCliente = this.contador;
+        if(this.primero == null){
+            nuevo.siguiente = null;
+            this.primero = nuevo;
+            this.ultimo = nuevo;
+        }else{
+            this.ultimo.siguiente = nuevo;
+            this.ultimo = nuevo;
+        }
+        this.contador++;
+    }
+    graficarCola(){
+        var contenido = "";
+        contenido += "digraph G {\n"+
+        "bgcolor=\"none\" label=\"Cola de Clientes\"layout=dot \n"+
+        "node [shape=record, style=filled, fontcolor = white,color=black, fillcolor=dimgrey];"
+
+        var nombreNodos = "";
+        var conexiones = "";
+        var actual = this.primero;
+
+        while(actual != null){
+            nombreNodos += "nodo"+actual.codigoCliente+'[label=\"Nombre: '+actual.cliente+"\n Libro: "+actual.libro+'"];\n';
+            if(actual.siguiente != null){
+                conexiones += "nodo"+actual.codigoCliente+"->nodo"+actual.siguiente.codigoCliente+";\n";
+            }
+            actual=actual.siguiente;
+        }
+
+        contenido += nombreNodos;
+        contenido += conexiones;
+        contenido += "\n}";
+
+
+
+        d3.select("#Cola_Disponibilidad").graphviz()
+            .width(1200)
+            .height(900)
+            .renderDot(contenido)
+
+    }
+    
+}
 
 var matrizThriller = new Matriz_Dispersa();
 var matrizFantasia = new Matriz_Dispersa();
 var listaUsuarios = new ListaUsuarios();
+var librosEnCola = new Lista_Cola();
+var Lista_Top5 = new ListaTop5();
 listaUsuarios.InsertarUsuario(2354168452525,"Wilfred Perez","Wilfred","wilfred@gmail.com","Administrador","123","+502 (123) 123-4567");
-listaUsuarios.InsertarUsuario(2354168452525,"Wilfred Perez","allenrovas","wilfred@gmail.com","Usuario","123","+502 (123) 123-4567");
 
 var listaAutores = new Arbol();
 var listaLibros = new ListaLibros();
@@ -907,8 +1154,7 @@ function llenarOrtogonal(){
         j=1;
         i+=1;
         
-    }
-    
+    }  
 }
 
 //Entrada a Usuarios o Administracion
@@ -932,6 +1178,7 @@ document.getElementById("btn_login").onclick=function(){
     }else{
         alert("Usuario o contraseña incorrectos");
     }
+    listaUsuarios.graficarUsuarios();
     
 }
 
@@ -986,6 +1233,7 @@ function CargarUsuarios(contenido){
     for (var i = 0; i < datos.length; i++) {
         listaUsuarios.InsertarUsuario(datos[i].dpi,datos[i].nombre_completo,datos[i].nombre_usuario,datos[i].correo,datos[i].rol,datos[i].contrasenia,datos[i].telefono);
     }
+    listaUsuarios.graficarUsuarios();
     alert("Usuarios cargados");
 }
 
@@ -996,14 +1244,15 @@ function CargarLibros(contenido){
         if(datos[i].categoria == "Fantasia"){
             matrizFantasia.modificar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
             matrizFantasia.agregarPilaMatriz(datos[i].fila,datos[i].columna,datos[i].nombre_libro,datos[i].cantidad);
-        }else if(datos[i].categoria == "Thriller"){
+        }
+    }
+    for (var i = 0; i < datos.length; i++) {
+        if(datos[i].categoria == "Thriller"){
             matrizThriller.insertar(datos[i].fila,datos[i].columna,datos[i].nombre_libro);
             matrizThriller.agregarPilaMatriz(datos[i].fila,datos[i].columna,datos[i].nombre_libro,datos[i].cantidad);
         }
-
     }
-    alert("Libros cargados");
-    /*try{
+   try{
         var contenido_fantasia= matrizFantasia.graficarNeato();
         d3.select("#Clasificacion_Fantasia").graphviz()
             .width(1200)
@@ -1028,9 +1277,10 @@ function CargarLibros(contenido){
             .renderDot(contenido_thriller)
     }catch(error){
         console.error(error);
-    }*/
-    //listaLibros.Bubble();
-    listaLibros.Tabla_Libros("Bubble");
+    }
+    listaLibros.Bubble();
+    listaLibros.Tabla_Libros();
+    matrizThriller.imprimir();
     
 }
 
@@ -1125,12 +1375,25 @@ document.getElementById("btn_BuscarLibro").onclick=function(){
 document.getElementById("btn_ordenarDescendente").onclick=function(){
     listaLibros.Sort(listaLibros.cabeza,listaLibros.cola);
     listaLibros.Tabla_Libros();
+    document.getElementById("Ordenamiento_Quicksort").style.display="block";
+    document.getElementById("Ordenamiento_Burbuja").style.display="none";
 }
 
 document.getElementById("btn_ordenarAscendente").onclick=function(){
     listaLibros.Bubble();
     listaLibros.Tabla_Libros();
+    document.getElementById("Ordenamiento_Quicksort").style.display="none";
+    document.getElementById("Ordenamiento_Burbuja").style.display="block";
 
+}
+
+document.getElementById("btn_ComprarLibro").onclick=function(){
+    try{
+        matrizFantasia.comprarLibro(document.getElementById("comprarLibro").value,document.getElementById("usuarioLogin").value);
+        matrizThriller.comprarLibro(document.getElementById("comprarLibro").value,document.getElementById("usuarioLogin").value);
+    }catch(error){
+        console.error(error);
+    }
 }
 
 llenarOrtogonal();
